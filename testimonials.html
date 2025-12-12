@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials - Riziq Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="../images/logo.png" alt="Logo">
+                <span>Riziq Admin</span>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a>
+                <a href="jobs.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i> Manage Jobs
+                </a>
+                <a href="blogs.html" class="nav-item">
+                    <i class="fas fa-newspaper"></i> Manage Blogs
+                </a>
+                <a href="testimonials.html" class="nav-item active">
+                    <i class="fas fa-star"></i> Testimonials
+                </a>
+                <a href="messages.html" class="nav-item">
+                    <i class="fas fa-envelope"></i> Messages
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </nav>
+            <div class="user-profile">
+                <div class="user-avatar">AD</div>
+                <div class="user-info">
+                    <h4>Admin User</h4>
+                    <p>Super Admin</p>
+                </div>
+                <a href="#" id="logoutBtn" style="color: var(--text-muted); margin-left: auto;"><i
+                        class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="mobile-toggle"><i class="fas fa-bars"></i></div>
+                <h1 class="page-title">Manage Testimonials</h1>
+            </header>
+
+            <div class="content-card animate-in">
+                <div class="card-header">
+                    <h3>Client Reviews</h3>
+                    <a href="#" class="btn-add"><i class="fas fa-plus"></i> Add Testimonial</a>
+                </div>
+
+                <!-- Mock Content for Visuals -->
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Review Preview</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="testimonialsTableBody">
+                            <!-- JS Injection -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Testimonial Modal -->
+    <div class="modal" id="addTestimonialModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Testimonial</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="addTestimonialForm">
+                <div class="form-group">
+                    <label class="form-label">Client Name</label>
+                    <input type="text" name="name" class="form-input" required placeholder="e.g. John Doe">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role / Location</label>
+                    <input type="text" name="role" class="form-input" required placeholder="e.g. Engineer, Dubai">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Review</label>
+                    <textarea name="text" class="form-input" rows="3" required
+                        placeholder="Client's feedback..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rating (1-5)</label>
+                    <input type="number" name="rating" class="form-input" min="1" max="5" value="5" required>
+                </div>
+                <button type="submit" class="btn-primary">Add Testimonial</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin-main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.querySelector('.btn-add'); // Selects the existing btn-add
+            const modal = document.getElementById('addTestimonialModal');
+            if (btn && modal) {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    modal.classList.add('active');
+                });
+                modal.querySelector('.close-modal').addEventListener('click', () => modal.classList.remove('active'));
+            }
+        });
+    </script>
+</body>
+
+</html>

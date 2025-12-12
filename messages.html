@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Riziq Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="../images/logo.png" alt="Logo">
+                <span>Riziq Admin</span>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a>
+                <a href="jobs.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i> Manage Jobs
+                </a>
+                <a href="blogs.html" class="nav-item">
+                    <i class="fas fa-newspaper"></i> Manage Blogs
+                </a>
+                <a href="testimonials.html" class="nav-item">
+                    <i class="fas fa-star"></i> Testimonials
+                </a>
+                <a href="messages.html" class="nav-item active">
+                    <i class="fas fa-envelope"></i> Messages
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </nav>
+            <div class="user-profile">
+                <div class="user-avatar">AD</div>
+                <div class="user-info">
+                    <h4>Admin User</h4>
+                    <p>Super Admin</p>
+                </div>
+                <a href="#" id="logoutBtn" style="color: var(--text-muted); margin-left: auto;"><i
+                        class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="mobile-toggle"><i class="fas fa-bars"></i></div>
+                <h1 class="page-title">Inbox & Applications</h1>
+            </header>
+
+            <!-- Filters -->
+            <div style="margin-bottom: 2rem; display: flex; gap: 1rem;">
+                <button class="btn-primary" style="width: auto; padding: 10px 20px; border-radius: 20px;">All</button>
+                <button class="btn-primary"
+                    style="width: auto; padding: 10px 20px; border-radius: 20px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);">Applications</button>
+                <button class="btn-primary"
+                    style="width: auto; padding: 10px 20px; border-radius: 20px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);">Contact
+                    Queries</button>
+            </div>
+
+            <div class="content-card animate-in">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Applicant</th>
+                                <th>Contact Support</th>
+                                <th>Applying For</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>CV</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTableBody">
+                            <!-- JS Injection -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin-main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Riziq Admin</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/admin-style.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="../images/logo.png" alt="Logo">
+                <span>Riziq Admin</span>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nav-item active">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a>
+                <a href="jobs.html" class="nav-item">
+                    <i class="fas fa-briefcase"></i> Manage Jobs
+                </a>
+                <a href="blogs.html" class="nav-item">
+                    <i class="fas fa-newspaper"></i> Manage Blogs
+                </a>
+                <a href="testimonials.html" class="nav-item">
+                    <i class="fas fa-star"></i> Testimonials
+                </a>
+                <a href="messages.html" class="nav-item">
+                    <i class="fas fa-envelope"></i> Messages
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div class="user-avatar">AD</div>
+                <div class="user-info">
+                    <h4>Admin User</h4>
+                    <p>Super Admin</p>
+                </div>
+                <a href="#" id="logoutBtn" style="color: var(--text-muted); margin-left: auto;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <h1 class="page-title">Dashboard Overview</h1>
+            </header>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card animate-in" style="animation-delay: 0.1s;">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>1,204</h3>
+                        <p>Total Visitors</p>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-in" style="animation-delay: 0.2s;">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>45</h3>
+                        <p>Applications Received</p>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-in" style="animation-delay: 0.3s;">
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalJobsCount">0</h3>
+                        <p>Active Jobs</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity / Quick Actions -->
+            <div class="content-card animate-in" style="animation-delay: 0.4s;">
+                <div class="card-header">
+                    <h3>Quick Actions</h3>
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="jobs.html" class="btn-add"
+                        style="background: var(--card-bg); border: 1px solid var(--glass-border);">
+                        <i class="fas fa-plus"></i> Post New Job
+                    </a>
+                    <a href="blogs.html" class="btn-add"
+                        style="background: var(--card-bg); border: 1px solid var(--glass-border);">
+                        <i class="fas fa-pen"></i> Write Blog
+                    </a>
+                    <a href="notifications.html" class="btn-add"
+                        style="background: var(--card-bg); border: 1px solid var(--glass-border);">
+                        <i class="fas fa-bell"></i> Send Notification
+                    </a>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="js/admin-main.js"></script>
+</body>
+
+</html>
