@@ -57,12 +57,14 @@
 
             <!-- Filters -->
             <div style="margin-bottom: 2rem; display: flex; gap: 1rem;">
-                <button class="btn-primary" style="width: auto; padding: 10px 20px; border-radius: 20px;">All</button>
-                <button class="btn-primary"
-                    style="width: auto; padding: 10px 20px; border-radius: 20px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);">Applications</button>
-                <button class="btn-primary"
-                    style="width: auto; padding: 10px 20px; border-radius: 20px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);">Contact
-                    Queries</button>
+                <button class="btn-primary msg-filter-btn active"
+                    onclick="RiziqAdmin.filterMessages('all', this)">All</button>
+                <button class="btn-primary msg-filter-btn"
+                    style="background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);"
+                    onclick="RiziqAdmin.filterMessages('Application', this)">Applications</button>
+                <button class="btn-primary msg-filter-btn"
+                    style="background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);"
+                    onclick="RiziqAdmin.filterMessages('Contact', this)">Contact Queries</button>
             </div>
 
             <div class="content-card animate-in">
