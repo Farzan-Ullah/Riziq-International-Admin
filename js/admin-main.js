@@ -2,55 +2,87 @@
    RIZIQ ADMIN - MAIN CONTROL
    ======================================== */
 
+   let currentAdminUser = null;
+
+firebase.auth().onAuthStateChanged(async (user) => {
+  const isLoginPage = window.location.pathname.includes("login.html");
+
+  if (!user) {
+    if (!isLoginPage) window.location.href = "login.html";
+    return;
+  }
+
+  const token = await user.getIdTokenResult();
+
+  if (!token.claims.admin) {
+    alert("Access denied: Not an admin");
+    await firebase.auth().signOut();
+    window.location.href = "login.html";
+    return;
+  }
+
+  // ✅ Admin verified
+  currentAdminUser = user;
+
+  // If admin is on login page → redirect to dashboard
+  if (isLoginPage) {
+    window.location.href = "applications.html";
+  }
+});
+
 const RiziqAdmin = {
     // Current Page Detection
     currentPage: window.location.pathname.split("/").pop(),
 
+
+    
+
     // Init
-    init: function () {
-        this.checkAuth();
-        this.seedData(); // Ensure data is populated on load
-        this.setupSidebar();
-        this.setupLogout();
-        this.renderPageContent();
-    },
+init: function () {
+    this.setupSidebar();
+    this.setupLogout();
 
-    // 1. Auth Check (Simulated)
-    checkAuth: function () {
-        const isAuth = localStorage.getItem('riziq_admin_auth');
-        const isLoginPage = this.currentPage === 'login.html' || this.currentPage === '';
+    const page = window.location.pathname;
 
-        if (!isAuth && !isLoginPage) {
-            window.location.href = 'login.html';
-        } else if (isAuth && isLoginPage) {
-            window.location.href = 'index.html';
-        }
-    },
+    if (page.includes("applications")) {
+        this.renderApplications();
+        this.setupApplicationModal();
+    }
 
-    // 2. Login Function
-    login: function (username, password) {
-        // Simple hardcoded check for demo
-        if (username === 'admin' && password === 'admin123') {
-            localStorage.setItem('riziq_admin_auth', 'true');
-            // Set default data if empty
-            if (!localStorage.getItem('riziq_jobs')) this.seedData();
-            window.location.href = 'index.html';
-            return true;
-        }
-        return false;
-    },
+  if (page.includes("jobs")) {
+    this.renderJobs();
+    this.setupJobModal(); // ✅ REQUIRED
+}
 
+    if (page.includes("blogs")) {
+        this.renderBlogs();
+    }
+
+    if (page.includes("testimonials")) {
+        this.renderTestimonials();
+    }
+
+    if (page.includes("messages")) {
+        this.renderMessages();
+    }
+},
     // 3. Logout
-    setupLogout: function () {
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('riziq_admin_auth');
-                window.location.href = 'login.html';
-            });
+ setupLogout: function () {
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (!logoutBtn) return;
+
+    logoutBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        try {
+            await firebase.auth().signOut();
+            window.location.href = "login.html";
+        } catch (err) {
+            alert("Logout failed");
+            console.error(err);
         }
-    },
+    });
+},
 
     // 4. Sidebar Toggle Mobile
     setupSidebar: function () {
@@ -80,274 +112,85 @@ const RiziqAdmin = {
         }
     },
 
-    // 5. Seed Initial Data (Rich Demo Data)
-    seedData: function () {
-        // Jobs
-        const jobs = JSON.parse(localStorage.getItem('riziq_jobs') || '[]');
-        if (jobs.length < 2) {
-            const initialJobs = [
-                { id: 1, title: 'Heavy Driver', location: 'Riyadh, Saudi Arabia', salary: '2500 SAR + OT', status: 'Active' },
-                { id: 2, title: 'Civil Engineer', location: 'Dubai, UAE', salary: '5000 AED', status: 'Active' },
-                { id: 3, title: 'Home Nurse (Female)', location: 'Kuwait City', salary: '450 KD', status: 'Closed' },
-                { id: 4, title: 'Electrician', location: 'Doha, Qatar', salary: '1800 QAR + Food', status: 'Active' },
-                { id: 5, title: 'Restaurant Manager', location: 'Manama, Bahrain', salary: '350 BD', status: 'Active' }
-            ];
-            localStorage.setItem('riziq_jobs', JSON.stringify(initialJobs));
-        }
-
-        // Blogs
-        const blogs = JSON.parse(localStorage.getItem('riziq_blogs') || '[]');
-        if (blogs.length < 2) {
-            const initialBlogs = [
-                { id: 1, title: 'How to Ace Your Gulf Interview', date: '2024-12-10', views: 125, content: 'Tips for interviews...' },
-                { id: 2, title: 'Top 5 Skills for Overseas Jobs', date: '2024-12-05', views: 98, content: 'Skills needed...' },
-                { id: 3, title: 'Visa Process for UAE Explained', date: '2024-11-20', views: 245, content: 'Visa guide...' }
-            ];
-            localStorage.setItem('riziq_blogs', JSON.stringify(initialBlogs));
-        }
-
-        // Testimonials
-        const testims = JSON.parse(localStorage.getItem('riziq_testimonials') || '[]');
-        if (testims.length < 2) {
-            const initialTestims = [
-                { id: 1, name: 'Aamir Khan', role: 'Software Engineer', text: 'Riziq International helped me find my dream job in Dubai. The process was smooth and transparent.', rating: 5, status: 'Active' },
-                { id: 2, name: 'Sana Mir', role: 'Nurse, Germany', text: 'Highly professional team. They guided me throughout the visa process.', rating: 5, status: 'Active' },
-                { id: 3, name: 'Rahul Sharma', role: 'HVAC Technician', text: 'Got my visa in just 20 days. Best consultancy in Kashmir!', rating: 4, status: 'Active' }
-            ];
-            localStorage.setItem('riziq_testimonials', JSON.stringify(initialTestims));
-        }
-
-        // Applications (Detailed)
-        const apps = JSON.parse(localStorage.getItem('riziq_applications') || '[]');
-        if (apps.length < 3) {
-            const initialApps = [
-                {
-                    id: 1702371000000,
-                    fullName: 'Mohammad Altaf',
-                    email: 'altaf.m@example.com',
-                    phone: '+91 7001234567',
-                    age: 28,
-                    height: "5'10\"",
-                    gender: 'Male',
-                    qualification: 'graduate',
-                    experience: '3-5',
-                    country: 'Saudi Arabia',
-                    jobType: 'Skilled Position',
-                    skills: 'Heavy Driving, Vehicle Maintenance, English Basic',
-                    appliedAt: '2024-12-12T10:30:00.000Z',
-                    status: 'New',
-                    cv: 'resume_altaf.pdf'
-                },
-                {
-                    id: 1702372000000,
-                    fullName: 'Fatima Zehra',
-                    email: 'fatima.z@test.com',
-                    phone: '+91 9906123456',
-                    age: 24,
-                    height: "5'4\"",
-                    gender: 'Female',
-                    qualification: 'diploma',
-                    experience: '1-2',
-                    country: 'UAE',
-                    jobType: 'Skilled Position',
-                    skills: 'Patient Care, ICU Management, First Aid',
-                    appliedAt: '2024-12-11T14:20:00.000Z',
-                    status: 'Viewed',
-                    cv: 'cv_fatima.docx'
-                },
-                {
-                    id: 1702373000000,
-                    fullName: 'Ishfaq Ahmad',
-                    email: 'ishfaq.c@example.com',
-                    phone: '+91 7889123456',
-                    age: 32,
-                    height: "6'0\"",
-                    gender: 'Male',
-                    qualification: 'professional',
-                    experience: '6-10',
-                    country: 'Qatar',
-                    jobType: 'Skilled Position',
-                    skills: 'Civil Engineering, AutoCAD, Project Management',
-                    appliedAt: '2024-12-10T09:15:00.000Z',
-                    status: 'Pending',
-                    cv: 'portfolio_ishfaq.pdf'
-                },
-                {
-                    id: 1702374000000,
-                    fullName: 'Bilal Wani',
-                    email: 'bilal.w@example.com',
-                    phone: '+91 6005123456',
-                    age: 22,
-                    height: "5'8\"",
-                    gender: 'Male',
-                    qualification: '12th',
-                    experience: 'fresher',
-                    country: 'Any Country',
-                    jobType: 'Unskilled Position',
-                    skills: 'Hardworking, Quick Learner',
-                    appliedAt: '2024-12-09T16:45:00.000Z',
-                    status: 'New',
-                    cv: null
-                }
-            ];
-            localStorage.setItem('riziq_applications', JSON.stringify(initialApps));
-        }
-
-        // Messages
-        const msgs = JSON.parse(localStorage.getItem('riziq_messages') || '[]');
-        if (msgs.length < 2) {
-            const initialMsgs = [
-                { id: 1, name: 'Zahoor Ahmad', email: 'zahoor@gmail.com', phone: '+91 9999999999', subject: 'Visa Enquiry', message: 'I want to know about the current visa processing time for Saudi Arabia.', receivedAt: '2024-12-12T11:00:00.000Z', status: 'Unread' },
-                { id: 2, name: 'Priya Sethi', email: 'priya@yahoo.com', phone: '+91 8888888888', subject: 'Partnership', message: 'We are a recruitment agency in Delhi, looking to partner with you.', receivedAt: '2024-12-10T14:30:00.000Z', status: 'Read' }
-            ];
-            localStorage.setItem('riziq_messages', JSON.stringify(initialMsgs));
-        }
-    },
-
-    // 6. Page Specific Rendering
-    renderPageContent: function () {
-        if (this.currentPage.includes('jobs')) {
-            this.renderJobs();
-            this.setupJobModal();
-        } else if (this.currentPage.includes('blogs')) {
-            this.renderBlogs();
-            this.setupBlogModal();
-        } else if (this.currentPage.includes('testimonials')) {
-            this.renderTestimonials();
-            this.setupTestimonialModal();
-        } else if (this.currentPage.includes('notifications')) {
-            this.renderNotifications();
-            this.setupNotificationModal();
-        } else if (this.currentPage.includes('messages')) {
-            this.renderMessages();
-        } else if (this.currentPage.includes('applications')) {
-            this.renderApplications();
-            this.setupApplicationModal();
-        } else if (this.currentPage === 'index.html' || this.currentPage === '') {
-            this.renderDashboardStats();
-        }
-    },
+   
 
     // --- APPLICATIONS FUNCTIONS ---
-    renderApplications: function () {
-        const tbody = document.getElementById('applicationsTableBody');
-        if (!tbody) return;
+  renderApplications: async function () {
+  const tbody = document.getElementById("applicationsTableBody");
+  if (!tbody) return;
 
-        const apps = JSON.parse(localStorage.getItem('riziq_applications') || '[]');
-        apps.sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt));
+  try {
+    const snap = await db
+      .collection("applications")
+      .orderBy("createdAt", "desc")
+      .get();
 
-        if (apps.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem;">No applications received yet.</td></tr>`;
-            return;
-        }
+    if (snap.empty) {
+      tbody.innerHTML = `<tr>
+        <td colspan="6" style="text-align:center;padding:2rem;">
+          No applications yet
+        </td>
+      </tr>`;
+      return;
+    }
 
-        tbody.innerHTML = apps.map(app => `
-            <tr>
-                <td>
-                    <strong>${app.fullName}</strong>
-                    <div style="font-size:0.8rem; color:var(--text-muted)">${app.email}</div>
-                </td>
-                <td>
-                    ${app.jobType} <br/>
-                    <small style="color:var(--secondary-color)">${app.country}</small>
-                </td>
-                <td>${app.experience}</td>
-                <td>${new Date(app.appliedAt).toLocaleDateString()}</td>
-                <td><span class="status-badge ${app.status === 'Pending' ? 'status-pending' : 'status-active'}">${app.status}</span></td>
-                <td>
-                    <button class="action-btn btn-edit" title="View Details" onclick="RiziqAdmin.viewApplication(${app.id})">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn btn-delete" title="Delete" onclick="RiziqAdmin.deleteItem('riziq_applications', ${app.id})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
-    },
+    tbody.innerHTML = snap.docs.map(doc => {
+      const app = doc.data();
+      return `
+        <tr>
+          <td>
+            <strong>${app.fullName}</strong>
+            <div style="font-size:0.8rem;color:#888">${app.email}</div>
+          </td>
+          <td>${app.jobTitle || "-"}<br><small>${app.country}</small></td>
+          <td>${app.experience}</td>
+          <td>${app.createdAt?.toDate().toLocaleDateString()}</td>
+          <td>
+            <span class="status-badge status-pending">
+              ${app.status}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn btn-edit"
+              onclick="RiziqAdmin.viewApplication('${doc.id}')">
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
 
-    viewApplication: function (id) {
-        const apps = JSON.parse(localStorage.getItem('riziq_applications') || '[]');
-        const app = apps.find(a => a.id === id);
-        if (!app) return;
+  } catch (err) {
+    console.error(err);
+    alert("Permission denied or admin not logged in");
+  }
+},
 
-        this.currentViewApp = app; // Store for PDF generation
 
-        const container = document.querySelector('.detail-grid');
-        const cvElem = document.getElementById('cvFilename');
-        const modal = document.getElementById('applicationModal');
+viewApplication: async function (id) {
+  const doc = await db.collection("applications").doc(id).get();
+  if (!doc.exists) return;
 
-        if (container) {
-            // Using Table for better PDF structure
-            container.innerHTML = `
-                <table style="width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif;">
-                    <tr style="background-color: #f9fafb;">
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; width: 40%; font-weight: 600; color: #374151;">Full Name</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.fullName}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Contact Email</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.email}</td>
-                    </tr>
-                    <tr style="background-color: #f9fafb;">
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">WhatsApp Number</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.phone}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Age</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.age || 'N/A'}</td>
-                    </tr>
-                    <tr style="background-color: #f9fafb;">
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Height</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.height || 'N/A'}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Gender</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.gender || 'N/A'}</td>
-                    </tr>
-                    <tr style="background-color: #f9fafb;">
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Qualification</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.qualification ? app.qualification.toUpperCase() : 'N/A'}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Experience</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.experience}</td>
-                    </tr>
-                    <tr style="background-color: #f9fafb;">
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Preferred Country</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.country ? app.country.toUpperCase() : 'N/A'}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Applying For</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.jobType}</td>
-                    </tr>
-                    <tr style="background-color: #f9fafb;">
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151; vertical-align: top;">Skills / Notes</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; color: #111827;">${app.skills || 'None listed'}</td>
-                    </tr>
-                </table>
-            `;
+  const app = doc.data();
+  this.currentViewApp = app;
 
-            // Override grid display for table
-            container.style.display = 'block';
-        }
+  document.querySelector(".detail-grid").innerHTML = `
+    <table style="width:100%">
+      <tr><td><b>Name</b></td><td>${app.fullName}</td></tr>
+      <tr><td><b>Email</b></td><td>${app.email}</td></tr>
+      <tr><td><b>Phone</b></td><td>${app.phone}</td></tr>
+      <tr><td><b>Country</b></td><td>${app.country}</td></tr>
+      <tr><td><b>Experience</b></td><td>${app.experience}</td></tr>
+    </table>
+  `;
 
-        if (cvElem) {
-            cvElem.innerHTML = app.cv ?
-                `<span style="display:flex; align-items:center; gap:8px;"><i class="fas fa-file-pdf" style="color:#ef4444"></i> ${app.cv}</span>` :
-                'No CV Uploaded';
-        }
+  document.getElementById("cvFilename").innerHTML =
+    app.cvUrl
+      ? `<a href="${app.cvUrl}" target="_blank">View CV</a>`
+      : "No CV";
 
-        // Show modal
-        if (modal) modal.classList.add('active');
-
-        // Update status to Viewed locally if it's new
-        if (app.status === 'Pending' || app.status === 'New') {
-            app.status = 'Viewed';
-            localStorage.setItem('riziq_applications', JSON.stringify(apps));
-            this.renderApplications();
-        }
-    },
+  document.getElementById("applicationModal").classList.add("active");
+},
 
     setupApplicationModal: function () {
         const modal = document.getElementById('applicationModal');
@@ -500,23 +343,55 @@ const RiziqAdmin = {
     },
 
     // --- JOB FUNCTIONS ---
-    renderJobs: function () {
-        const tbody = document.getElementById('jobsTableBody');
-        if (!tbody) return;
+   renderJobs: async function () {
+    const tbody = document.getElementById("jobsTableBody");
+    if (!tbody) return;
 
-        const jobs = JSON.parse(localStorage.getItem('riziq_jobs') || '[]');
-        tbody.innerHTML = jobs.map(job => `
-            <tr>
+    try {
+        const snap = await db
+            .collection("jobs")
+            .orderBy("createdAt", "desc")
+            .get();
+
+        if (snap.empty) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="5" style="text-align:center;padding:2rem;">
+                  No jobs added yet
+                </td>
+              </tr>`;
+            return;
+        }
+
+        tbody.innerHTML = snap.docs.map(doc => {
+            const job = doc.data();
+            return `
+              <tr>
                 <td><strong>${job.title}</strong></td>
                 <td>${job.location}</td>
                 <td>${job.salary}</td>
-                <td><span class="status-badge ${job.status === 'Active' ? 'status-active' : 'status-pending'}">${job.status}</span></td>
                 <td>
-                    <button class="action-btn btn-delete" onclick="RiziqAdmin.deleteItem('riziq_jobs', ${job.id})"><i class="fas fa-trash"></i></button>
+                  <span class="status-badge ${
+                    job.status === "active" ? "status-active" : "status-pending"
+                  }">
+                    ${job.status}
+                  </span>
                 </td>
-            </tr>
-        `).join('');
-    },
+                <td>
+                  <button class="action-btn btn-delete"
+                    onclick="RiziqAdmin.deleteJob('${doc.id}')">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
+        }).join("");
+
+    } catch (err) {
+        console.error(err);
+        alert("Failed to load jobs");
+    }
+},
 
     setupJobModal: function () {
         const btn = document.querySelector('.btn-add');
@@ -534,20 +409,44 @@ const RiziqAdmin = {
             });
         }
 
-        if (form) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const formData = {
-                    title: form.title.value,
-                    location: form.location.value,
-                    salary: form.salary.value
-                };
-                this.addItem('riziq_jobs', formData);
-                form.reset();
-                this.closeModal('addJobModal');
-            });
+      if (form) {
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const jobData = {
+            title: form.title.value,
+            location: form.location.value,
+            salary: form.salary.value,
+            status: "active",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        try {
+            await db.collection("jobs").add(jobData);
+            form.reset();
+            this.closeModal("addJobModal");
+            this.renderJobs();
+            this.showToast("Job published successfully!");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to publish job");
         }
+    });
+}
     },
+
+    deleteJob: async function (jobId) {
+    if (!confirm("Delete this job?")) return;
+
+    try {
+        await db.collection("jobs").doc(jobId).delete();
+        this.renderJobs();
+        this.showToast("Job deleted");
+    } catch (err) {
+        console.error(err);
+        alert("Failed to delete job");
+    }
+},
 
     // --- BLOG FUNCTIONS ---
     renderBlogs: function () {

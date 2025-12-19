@@ -3,16 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Riziq International</title>
 
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- CSS -->
     <link rel="stylesheet" href="css/admin-style.css">
-
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -21,46 +15,66 @@
     <div class="login-wrap">
         <div class="login-card ani-up">
             <img src="../images/logo.png" alt="Logo" class="auth-logo">
+
             <h1 class="login-title">Welcome Back</h1>
-            <p class="login-subtitle">Enter your credentials to access the panel</p>
+            <p class="login-subtitle">Enter admin credentials</p>
 
             <form id="loginForm">
                 <div class="form-group">
-                    <label class="form-label">Username</label>
-                    <input type="text" id="username" class="form-input" placeholder="Enter username" required>
+                    <label class="form-label">Email</label>
+                    <input type="email" id="email" class="form-input" required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Password</label>
-                    <input type="password" id="password" class="form-input" placeholder="Enter password" required>
+                    <input type="password" id="password" class="form-input" required>
                 </div>
 
                 <button type="submit" class="btn-primary">
-                    Sign In <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                    Sign In <i class="fas fa-arrow-right"></i>
                 </button>
             </form>
-
-            <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted);">
-                Is this your first time? Use default credentials provided by developer.
-            </p>
         </div>
     </div>
 
-    <script src="js/admin-main.js"></script>
-    <script>
-        // Override Init for Login Page specific logic
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-            if (RiziqAdmin.login(u, p)) {
-                // Success handled in main.js
-            } else {
-                alert('Invalid Credentials! (Try: admin / admin123)');
-            }
-        });
-    </script>
+<script src="js/firebase.js"></script>
+<script src="js/admin-main.js"></script>
+
+    <!-- ✅ Login Logic -->
+   <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      const res = await firebase.auth().signInWithEmailAndPassword(email, password);
+      const token = await res.user.getIdTokenResult();
+
+      if (!token.claims.admin) {
+        alert("Not an admin account");
+        await firebase.auth().signOut();
+        return;
+      }
+
+      // ✅ Admin authenticated
+      window.location.href = "applications.html";
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+});
+</script>
+    
+
 </body>
 
 </html>
