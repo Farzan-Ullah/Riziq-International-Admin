@@ -12,11 +12,16 @@
 
 <body>
 
+    <!-- Auth Loader -->
+<!-- <div id="authLoader" class="auth-loader">
+  <i class="fas fa-circle-notch fa-spin"></i>
+</div> -->
+
     <div class="admin-layout">
         <!-- Reusing Sidebar for consistency -->
         <aside class="sidebar">
             <div class="brand">
-                <!-- <img src="../images/logo.png" alt="Logo"> -->
+                <img src="../images/logo.png" alt="Logo">
                 <span>Riziq Admin</span>
             </div>
             <nav class="nav-links">
@@ -26,7 +31,7 @@
                 <a href="jobs.html" class="nav-item active">
                     <i class="fas fa-briefcase"></i> Manage Jobs
                 </a>
-                <a href="blogs.html" class="nav-item">
+                <!-- <a href="blogs.html" class="nav-item">
                     <i class="fas fa-newspaper"></i> Manage Blogs
                 </a>
                 <a href="testimonials.html" class="nav-item">
@@ -34,7 +39,7 @@
                 </a>
                 <a href="messages.html" class="nav-item">
                     <i class="fas fa-envelope"></i> Messages
-                </a>
+                </a> -->
                 <a href="settings.html" class="nav-item">
                     <i class="fas fa-cog"></i> Settings
                 </a>
@@ -42,7 +47,7 @@
             <div class="user-profile">
                 <div class="user-avatar">AD</div>
                 <div class="user-info">
-                    <h4>Admin User</h4>
+                    <h4>Admin</h4>
                     <p>Super Admin</p>
                 </div>
                 <a href="#" id="logoutBtn" style="color: var(--text-muted); margin-left: auto;"><i
@@ -68,7 +73,7 @@
                             <tr>
                                 <th>Job Title</th>
                                 <th>Location</th>
-                                <th>Salary</th>
+                               <th>Description</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -98,10 +103,16 @@
                     <label class="form-label">Location</label>
                     <input type="text" name="location" class="form-input" required placeholder="e.g. Riyadh, KSA">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Salary</label>
-                    <input type="text" name="salary" class="form-input" required placeholder="e.g. 3000 SAR + OT">
-                </div>
+              <div class="form-group">
+  <label class="form-label">Job Description</label>
+  <textarea
+    name="description"
+    class="form-input"
+    rows="4"
+    required
+    placeholder="Enter job responsibilities, requirements, benefits..."
+  ></textarea>
+</div>
                 <button type="submit" class="btn-primary">Publish Job</button>
             </form>
         </div>

@@ -12,6 +12,11 @@
 
 <body>
 
+    <!-- Auth Loader -->
+<!-- <div id="authLoader" class="auth-loader">
+  <i class="fas fa-circle-notch fa-spin"></i>
+</div> -->
+
     <div class="admin-layout">
         <aside class="sidebar">
             <div class="brand">
@@ -25,7 +30,7 @@
                 <a href="jobs.html" class="nav-item">
                     <i class="fas fa-briefcase"></i> Manage Jobs
                 </a>
-                <a href="blogs.html" class="nav-item">
+                <!-- <a href="blogs.html" class="nav-item">
                     <i class="fas fa-newspaper"></i> Manage Blogs
                 </a>
                 <a href="testimonials.html" class="nav-item">
@@ -33,7 +38,7 @@
                 </a>
                 <a href="messages.html" class="nav-item">
                     <i class="fas fa-envelope"></i> Messages
-                </a>
+                </a> -->
                 <a href="settings.html" class="nav-item active">
                     <i class="fas fa-cog"></i> Settings
                 </a>
@@ -41,55 +46,134 @@
             <div class="user-profile">
                 <div class="user-avatar">AD</div>
                 <div class="user-info">
-                    <h4>Admin User</h4>
+                    <h4>Admin</h4>
                     <p>Super Admin</p>
                 </div>
                 <a href="#" id="logoutBtn" style="color: var(--text-muted); margin-left: auto;"><i
                         class="fas fa-sign-out-alt"></i></a>
             </div>
         </aside>
+<main class="main-content">
+  <header class="top-bar">
+    <div class="mobile-toggle"><i class="fas fa-bars"></i></div>
+    <h1 class="page-title">Change Password</h1>
+  </header>
 
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="mobile-toggle"><i class="fas fa-bars"></i></div>
-                <h1 class="page-title">Site Settings</h1>
-            </header>
-
-            <div class="content-card animate-in" style="max-width: 800px;">
-                <div class="card-header">
-                    <h3>General Configuration</h3>
-                </div>
-
-                <form onsubmit="event.preventDefault(); alert('Settings Saved! (Demo)');">
-                    <div class="form-group">
-                        <label class="form-label">Website Name</label>
-                        <input type="text" value="Riziq International" class="form-input">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Update Logo</label>
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <img src="../images/logo.png"
-                                style="width: 50px; background: rgba(255,255,255,0.1); padding: 5px; border-radius: 8px;">
-                            <input type="file" class="form-input" style="padding: 10px;">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Contact Email</label>
-                        <input type="email" value="info@riziqinternational.com" class="form-input">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Contact Phone</label>
-                        <input type="text" value="+91 7006001199" class="form-input">
-                    </div>
-
-                    <button class="btn-primary" style="width: auto; padding: 12px 24px;">Save Changes</button>
-                </form>
-            </div>
-        </main>
+  <div class="content-card animate-in" style="max-width:500px;">
+    <div class="card-header">
+      <h3>Update Admin Password</h3>
     </div>
+
+    <form id="passwordForm">
+
+      <!-- EMAIL (READ ONLY) -->
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="adminEmail" class="form-input" disabled>
+      </div>
+
+      <!-- CURRENT PASSWORD -->
+      <div class="form-group">
+        <label class="form-label">Current Password</label>
+        <div class="password-wrap">
+          <input type="password" id="currentPassword" class="form-input" required>
+          <i class="fas fa-eye toggle-eye" data-target="currentPassword"></i>
+        </div>
+      </div>
+
+      <!-- NEW PASSWORD -->
+      <div class="form-group">
+        <label class="form-label">New Password</label>
+        <div class="password-wrap">
+          <input type="password" id="newPassword" class="form-input" required minlength="6">
+          <i class="fas fa-eye toggle-eye" data-target="newPassword"></i>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="saveBtn">
+        Save Password
+      </button>
+
+    </form>
+  </div>
+</main>
+    </div>
+
+       <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+
+<script src="js/firebase.js"></script>
+
+<script>
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (!user) return;
+
+  document.getElementById("adminEmail").value = user.email;
+});
+
+const form = document.getElementById("passwordForm");
+const btn = document.getElementById("saveBtn");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const currentPassword = document.getElementById("currentPassword").value;
+  const newPassword = document.getElementById("newPassword").value;
+  const user = firebase.auth().currentUser;
+
+  if (!user) return;
+
+  btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Saving...`;
+  btn.classList.add("btn-loading");
+
+  try {
+    // 🔐 Re-authenticate
+    const cred = firebase.auth.EmailAuthProvider.credential(
+      user.email,
+      currentPassword
+    );
+    await user.reauthenticateWithCredential(cred);
+
+    // 🔐 Update password
+    await user.updatePassword(newPassword);
+
+    showToast("Password updated successfully. Please login again.");
+
+    setTimeout(async () => {
+      await firebase.auth().signOut();
+      window.location.href = "login.html";
+    }, 2000);
+
+  } catch (err) {
+    showToast(err.message, true);
+    btn.innerHTML = "Save Password";
+    btn.classList.remove("btn-loading");
+  }
+});
+
+// 👁 Toggle password visibility
+document.querySelectorAll(".toggle-eye").forEach(icon => {
+  icon.addEventListener("click", () => {
+    const input = document.getElementById(icon.dataset.target);
+    const isPassword = input.type === "password";
+    input.type = isPassword ? "text" : "password";
+    icon.classList.toggle("fa-eye");
+    icon.classList.toggle("fa-eye-slash");
+  });
+});
+
+// 🔔 Toast
+function showToast(msg, error = false) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.style.background = error ? "#dc2626" : "#16a34a";
+  toast.innerText = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+</script>
 
     <script src="js/admin-main.js"></script>
 </body>

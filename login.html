@@ -12,11 +12,15 @@
 
 <body>
 
+  <div id="pageLoader" class="page-loader">
+  <i class="fas fa-circle-notch fa-spin"></i>
+</div>
+
     <div class="login-wrap">
         <div class="login-card ani-up">
             <img src="../images/logo.png" alt="Logo" class="auth-logo">
 
-            <h1 class="login-title">Welcome Back</h1>
+            <h1 class="login-title">Welcome Admin!</h1>
             <p class="login-subtitle">Enter admin credentials</p>
 
             <form id="loginForm">
@@ -42,37 +46,102 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script src="js/firebase.js"></script>
-<script src="js/admin-main.js"></script>
+
+<script>
+const loader = document.getElementById("pageLoader");
+const loginCard = document.querySelector(".login-card");
+
+
+loginCard.style.display = "none";
+
+firebase.auth().onAuthStateChanged(async (user) => {
+
+  setTimeout(() => {
+    if (user) {
+      // Already logged in → go dashboard
+      window.location.href = "applications.html";
+    } else {
+      // Not logged in → show login
+      loader.style.display = "none";
+      loginCard.style.display = "block";
+    }
+  }, 500);
+});
+</script>
+
+
+<script>
+function showToast(message, isError = false) {
+  const old = document.querySelector(".toast");
+  if (old) old.remove();
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${isError ? "error" : "success"}`;
+  toast.textContent = message;
+
+  document.body.appendChild(toast);
+
+  // visible time
+  setTimeout(() => {
+    toast.classList.add("hide");
+
+    // remove after fade-out
+    setTimeout(() => {
+      toast.remove();
+    }, 400);
+
+  }, 4000);
+}
+</script>
 
     <!-- ✅ Login Logic -->
-   <script>
+ <script>
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
+  const btn = loginForm.querySelector("button");
 
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
+
+    btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Signing in...`;
+    btn.classList.add("btn-loading");
 
     try {
       const res = await firebase.auth().signInWithEmailAndPassword(email, password);
       const token = await res.user.getIdTokenResult();
 
       if (!token.claims.admin) {
-        alert("Not an admin account");
         await firebase.auth().signOut();
+        showToast("Access denied: Not an admin", true);
+        resetBtn();
         return;
       }
 
-      // ✅ Admin authenticated
-      window.location.href = "applications.html";
+sessionStorage.setItem("toastMessage", "Welcome back, Admin 👋");
+sessionStorage.setItem("toastType", "success");
+
+
+setTimeout(() => {
+  window.location.href = "index.html";
+}, 600);
+
     } catch (err) {
-      alert(err.message);
+      showToast(err.message, true);
+      resetBtn();
     }
   });
+
+  function resetBtn() {
+    btn.innerHTML = `Sign In <i class="fas fa-arrow-right"></i>`;
+    btn.classList.remove("btn-loading");
+  }
 });
 </script>
+
+
     
 
 </body>

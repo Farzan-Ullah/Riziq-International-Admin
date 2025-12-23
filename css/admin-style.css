@@ -88,7 +88,7 @@ body {
 }
 
 .auth-logo {
-    width: 80px;
+    width: 50px;
     margin-bottom: 1.5rem;
 }
 
@@ -97,6 +97,7 @@ body {
     font-weight: 700;
     margin-bottom: 0.5rem;
     background: linear-gradient(135deg, #fff, #94a3b8);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -149,6 +150,7 @@ body {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    margin-top: 20px;
 }
 
 .btn-primary:hover {
@@ -497,6 +499,101 @@ tr:last-child td {
     font-size: 1.5rem;
     cursor: pointer;
 }
+
+
+.password-wrap {
+  position: relative;
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+/* Loader inside button */
+.btn-loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  min-width: 250px;
+  padding: 14px 20px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  z-index: 999999; /* 🔥 FORCE ON TOP */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: toastIn 0.4s ease;
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.toast.hide {
+  animation: toastOut 0.4s ease forwards;
+}
+
+.admin-layout {
+  display: none;
+}
+
+.page-loader {
+  position: fixed;
+  inset: 0;
+  background: #020617;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.page-loader i {
+  font-size: 6rem;
+  color: #cca353;
+}
+
+.status-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}
+
 
 /* ========================================
    RESPONSIVE DESIGN

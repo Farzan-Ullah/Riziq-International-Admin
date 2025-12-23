@@ -18,11 +18,16 @@
 
 <body>
 
+    <!-- Auth Loader -->
+<!-- <div id="authLoader" class="auth-loader">
+  <i class="fas fa-circle-notch fa-spin"></i>
+</div> -->
+
     <div class="admin-layout">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="brand">
-                <!-- <img src="../images/logo.png" alt="Logo"> -->
+                <img src="../images/logo.png" alt="Logo">
                 <span>Riziq Admin</span>
             </div>
 
@@ -36,7 +41,7 @@
                 <a href="jobs.html" class="nav-item">
                     <i class="fas fa-briefcase"></i> Manage Jobs
                 </a>
-                <a href="blogs.html" class="nav-item">
+                <!-- <a href="blogs.html" class="nav-item">
                     <i class="fas fa-newspaper"></i> Manage Blogs
                 </a>
                 <a href="testimonials.html" class="nav-item">
@@ -44,7 +49,7 @@
                 </a>
                 <a href="messages.html" class="nav-item">
                     <i class="fas fa-envelope"></i> Messages
-                </a>
+                </a> -->
                 <a href="settings.html" class="nav-item">
                     <i class="fas fa-cog"></i> Settings
                 </a>
@@ -53,7 +58,7 @@
             <div class="user-profile">
                 <div class="user-avatar">AD</div>
                 <div class="user-info">
-                    <h4>Admin User</h4>
+                    <h4>Admin</h4>
                     <p>Super Admin</p>
                 </div>
                 <a href="#" id="logoutBtn" style="color: var(--text-muted); margin-left: auto;">
@@ -78,8 +83,8 @@
                         <i class="fas fa-eye"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>1,204</h3>
-                        <p>Total Visitors</p>
+                     <h3 id="totalVisitors">0</h3>
+<p>Total Visitors</p>
                     </div>
                 </div>
 
@@ -88,8 +93,8 @@
                         <i class="fas fa-file-contract"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>45</h3>
-                        <p>Applications Received</p>
+                      <h3 id="totalApplications">0</h3>
+<p>Applications Received</p>
                     </div>
                 </div>
 
@@ -115,14 +120,14 @@
                         style="background: var(--card-bg); border: 1px solid var(--glass-border);">
                         <i class="fas fa-plus"></i> Post New Job
                     </a>
-                    <a href="blogs.html" class="btn-add"
+                    <!-- <a href="blogs.html" class="btn-add"
                         style="background: var(--card-bg); border: 1px solid var(--glass-border);">
                         <i class="fas fa-pen"></i> Write Blog
                     </a>
                     <a href="notifications.html" class="btn-add"
                         style="background: var(--card-bg); border: 1px solid var(--glass-border);">
                         <i class="fas fa-bell"></i> Send Notification
-                    </a>
+                    </a> -->
                 </div>
             </div>
 
